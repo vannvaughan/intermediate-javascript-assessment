@@ -12,8 +12,14 @@
 // with the animal as the context, and 'Trogdor' as a parameter.
 // return the result of your updateAnimal invocation
 
-// CODE HERE...
-
+function callBinding(magicAnimals, updateAnimal, id){
+    magicAnimals.filter(function(animal){
+        if (animal.id == id){
+            animal = updateAnimal.call(magicAnimals, 'Trogdor')
+        }
+    })
+    return magicAnimals
+}
 
 
 // *************
@@ -27,7 +33,15 @@
 // with the context of the animal, and the array ['being majestic', 'eating rainbows'] as a parameter.
 // return the result of your updateAnimal invocation
 
-// CODE HERE...
+function applyBinding(magicAnimals, updateAnimal, id){
+    var newAnimal = ""
+    magicAnimals.filter(function(animal){
+        if (animal.id == id) {
+            newAnimal = animal
+        }
+    })
+    return updateAnimal.apply(newAnimal, ['being majestic', 'eating rainbows'])
+}
 
 
 
@@ -47,6 +61,19 @@
 
 var foo;
 
+function promiseMe(promise) {
+	var timeout = promise.defer();
+	setTimeout(function() {
+		timeout.resolve(function(){
+			foo = "bar";
+			return foo;
+		});
+	}, 20);
+	return timeout.promise.then(function(results){
+        return results()
+    })
+}
+
 // CODE HERE...
 
 
@@ -64,3 +91,20 @@ var foo;
 // and then resolve the array as you complete your promise.
 
 // CODE HERE...
+
+function emailList(promise, http) {
+	var timeout = promise.defer();
+	let emailsArr = [];
+    http.get('/api/users')
+    .then(function(response){
+		for (var i=0; i < response.data.length; i++) {
+			emailsArr.push(response.data[i].email);
+		}
+	});
+	timeout.resolve(function() {
+		return emailsArr;
+	})
+	return timeout.promise.then(function(response){
+        return response()
+    });
+}
